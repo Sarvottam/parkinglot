@@ -15,6 +15,7 @@ class Dbhelper {
           await this.initialiseParkingLot();
           return;
         } catch (ex) {
+          _logger.error(`Error starting mongo ${ex}`)
           process.exit(ex);
         }
       }
