@@ -5,7 +5,7 @@ const controller = require('../controllers');
 
 router.get('/availaibleSlots', controller.parkingSlot.getAllAvailaibleParking);
 router.get('/occupiedSlots', controller.parkingSlot.getAllOccupiedSlots);
-router.get('/bookslots', controller.parkingSlot.bookParkingSlot);
+router.post('/bookslots', controller.parkingSlot.bookParkingSlot);
 
 
 module.exports = router;
