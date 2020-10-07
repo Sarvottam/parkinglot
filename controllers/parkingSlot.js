@@ -1,5 +1,5 @@
 const { Dbhelper } = require('../utils/dbHelper');
-const { MAX_PARKING_LOT_ID } = require('../config/constant');
+const { MAX_PARKING_LOT_ID , PARKING_LOT_ERRORS} = require('../config/constant');
 const { checkBookingTime } = require('../utils/helper');
 
 module.exports = {
@@ -32,14 +32,14 @@ module.exports = {
       } = req.body;
       _logger.debug('bookParkingSlot started');
       if (!arrivalDate || !arrivalTime || !userName) {
-        throw new Error('arrivalDate or arrivalTime or userName missing');
+        throw new Error(PARKING_LOT_ERRORS.Missing_Query_Info);
       }
       const { arrivingTime, bookingTime } = await checkBookingTime({ arrivalTime, arrivalDate });
       _logger.debug(`arrivingTime bookingTime  ${arrivingTime} ${bookingTime}`);
 
       const userData = await Dbhelper.getUser({ userName });
       if (!userData.length) {
-        throw new Error('User not Found');
+        throw new Error(PARKING_LOT_ERRORS.User_Not_Found);
       }
       let availaibleParkingSlots = 0;
       // const slotExists = await Dbhelper.checkEmptySlot({ parkingId });
@@ -47,7 +47,7 @@ module.exports = {
       const occupiedParkingSlots = await Dbhelper.getOccupiedParkingSlots();
       const percentageOccupied = (occupiedParkingSlots.length * 100) / MAX_PARKING_LOT_ID;
       if (occupiedParkingSlots === 100) {
-        throw new Error('all slots occupied');
+        throw new Error(PARKING_LOT_ERRORS.Slots_Occupied);
       }
       _logger.debug(`occupiedParkingSlots percentageOccupied  ${occupiedParkingSlots.length} ${percentageOccupied}`);
       if (percentageOccupied > 50) {
@@ -56,7 +56,7 @@ module.exports = {
         availaibleParkingSlots = await Dbhelper.getParkingSlots(30);
       }
       if (availaibleParkingSlots.length === 0) {
-        throw new Error('no slots availaible');
+        throw new Error(PARKING_LOT_ERRORS.Slots_Occupied);
       }
 
       const firstReservedSlot = availaibleParkingSlots.find((data) => data.parkingId < 20);
@@ -67,7 +67,7 @@ module.exports = {
       } else if (firstGeneralSlot) {
         parkingId = firstGeneralSlot;
       } else {
-        throw new Error('slots not availaible ');
+        throw new Error(PARKING_LOT_ERRORS.Slots_Occupied);
       }
       const dataInserted = await Dbhelper.bookParkingSlot({ bookingTime, arrivalTime: arrivingTime, parkingId: parkingId.parkingId });
       _logger.debug(` dataInserted  ${dataInserted}`);
