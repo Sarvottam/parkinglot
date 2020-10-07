@@ -24,9 +24,13 @@ module.exports = {
   },
   bookParkingSlot: async (req, res) => {
     try {
+      //arrivalTime = 11:00, arrivalDate =07/10/2020, 
       let {
         arrivalTime, arrivalDate, userName, parkingId,
       } = req.body;
+      if (!arrivalDate || !arrivalTime || !userName) {
+        throw new Error('arrivalDate or arrivalTime or userName missing');
+      }
       const { arrivingTime, bookingTime } = await checkBookingTime({ arrivalTime, arrivalDate });
       const userData = await Dbhelper.getUser({ userName });
       if (!userData.length) {

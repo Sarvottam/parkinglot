@@ -158,9 +158,12 @@ class Dbhelper {
   }
 
   async getUser({ userName }) {
-   console.log("userNNNNNNNNNNNNNN " ,userName)
-    const userData = await User.find({ userName });
-    return userData;
+    try {
+      const userData = await User.find({ userName });
+      return userData;
+    } catch (e) {
+      throw (e);
+    }
   }
 
   async close() {
