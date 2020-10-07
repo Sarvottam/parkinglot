@@ -3,7 +3,7 @@ const express = require('express');
 const http = require('http');
 const AppConfig = require('./config/appConfig');
 const Routes = require('./routes');
-require('./utils/dbHelper');
+const Logger = require("./utils/logger")
 
 class Server {
   constructor() {
@@ -16,6 +16,7 @@ class Server {
 
   appConfig() {
     new AppConfig(this.app).includeConfig();
+    new Logger()
   }
 
   /* Including app Routes starts */
@@ -31,8 +32,7 @@ class Server {
     const host = process.env.NODE_ENV === 'dev' ? process.env.NODE_SERVER_LOCAL : process.env.NODE_SERVER_HOST_PROD || '0.0.0.0';
 
     this.http.listen(port, host, () => {
-      console.log(`Listening on http://${host}:${port}`);
-      // _logger.info(`Listening on http://${host}:${port}`);
+      _logger.info(`Listening on http://${host}:${port}`);
     });
 
     this.includeRoutes();

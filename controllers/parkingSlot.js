@@ -5,7 +5,9 @@ const { checkBookingTime } = require('../utils/helper');
 module.exports = {
   getAllAvailaibleParking: async (req, res) => {
     try {
-      const availaibleParkingSlots = await Dbhelper.getParkingSlots();
+      _logger.debug('getAllAvailaibleParking called');
+      const availaibleParkingSlots = await Dbhelper.getParkingSlots(30);
+      _logger.debug('availaibleParkingSlots  ', availaibleParkingSlots);
       return _handleResponse(req, res, null, availaibleParkingSlots);
     } catch (e) {
       // _logger.error('Error in login  ', e);
@@ -24,14 +26,17 @@ module.exports = {
   },
   bookParkingSlot: async (req, res) => {
     try {
-      //arrivalTime = 11:00, arrivalDate =07/10/2020, 
+      // arrivalTime = 11:00, arrivalDate =07/10/2020,
       let {
         arrivalTime, arrivalDate, userName, parkingId,
       } = req.body;
+      _logger.debug('bookParkingSlot started');
       if (!arrivalDate || !arrivalTime || !userName) {
         throw new Error('arrivalDate or arrivalTime or userName missing');
       }
       const { arrivingTime, bookingTime } = await checkBookingTime({ arrivalTime, arrivalDate });
+      _logger.debug(`arrivingTime bookingTime  ${arrivingTime} ${bookingTime}`);
+
       const userData = await Dbhelper.getUser({ userName });
       if (!userData.length) {
         throw new Error('User not Found');
@@ -44,7 +49,7 @@ module.exports = {
       if (occupiedParkingSlots === 100) {
         throw new Error('all slots occupied');
       }
-
+      _logger.debug(`occupiedParkingSlots percentageOccupied  ${occupiedParkingSlots.length} ${percentageOccupied}`);
       if (percentageOccupied > 50) {
         availaibleParkingSlots = await Dbhelper.getParkingSlots(15);
       } else {
@@ -65,9 +70,10 @@ module.exports = {
         throw new Error('slots not availaible ');
       }
       const dataInserted = await Dbhelper.bookParkingSlot({ bookingTime, arrivalTime: arrivingTime, parkingId: parkingId.parkingId });
+      _logger.debug(` dataInserted  ${dataInserted}`);
       return _handleResponse(req, res, null, dataInserted);
     } catch (e) {
-      console.log(e);
+      _logger.error(`Error booking slot ${e}`)
       return _handleResponse(req, res, e);
     }
   },

@@ -2,7 +2,6 @@
 module.exports = {
   checkBookingTime: async ({ arrivalTime, arrivalDate }) => {
    let arrivingTime = arrivalTime.split(':');
-    
     arrivalDate = arrivalDate.split('/');
     arrivingTime = new Date(arrivalDate[2], arrivalDate[1] - 1,
       arrivalDate[0], arrivingTime[0], arrivingTime[1], 0, 0);

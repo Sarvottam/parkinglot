@@ -6,9 +6,9 @@ const ExpressConfigModule = require('./expressConfig');
 
 class AppConfig {
   constructor(app) {
-    // global._logger = logger
+
     process.on('unhandledRejection', (reason, p) => {
-      // _logger.error(reason)
+      _logger.error("unhandles Rejection")
       // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
     });
     this.app = app;
