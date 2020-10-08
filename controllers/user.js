@@ -1,5 +1,5 @@
 const { Dbhelper } = require('../utils/dbHelper');
-const { USER_ERRORS,GENDER } = require('../config/constant');
+const { USER_ERRORS, GENDER } = require('../config/constant');
 
 module.exports = {
   register: async (req, res) => {
