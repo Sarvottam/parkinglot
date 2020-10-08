@@ -10,7 +10,7 @@ class Dbhelper {
       if (!this.db) {
         try {
           const uri = process.env.NODE_ENV === 'dev' ? process.env.MONGOTESTURI : process.env.MONGOURI;
-          await mongoose.connect(`${uri}`, { useNewUrlParser: true });
+          await mongoose.connect(`${uri}`, { useNewUrlParser: true, useUnifiedTopology: true });
           this.db = mongoose.connection;
           await this.initialiseParkingLot();
           return;
@@ -26,7 +26,7 @@ class Dbhelper {
   async initialiseParkingLot() {
   // eslint-disable-next-line no-useless-catch
     try {
-      const dataCount = await ParkingLot.find().count();
+      const dataCount = await ParkingLot.find().countDocuments();
       if (dataCount === 0) {
         const lotArray = [];
         for (let i = MIN_PARKING_LOT_ID; i <= MAX_PARKING_LOT_ID; i++) {
@@ -147,7 +147,7 @@ class Dbhelper {
       pageSize = pageSize || 100;
       const skips = pageSize * (pageNum - 1);
       condition = condition || {};
-      const totalCount = await User.count(condition);
+      const totalCount = await User.countDocuments(condition);
       let multipleDocData = await User.find(condition).skip(skips)
       // eslint-disable-next-line radix
         .limit(parseInt(pageSize)).sort({ createdDate: -1 });

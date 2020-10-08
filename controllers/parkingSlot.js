@@ -18,6 +18,7 @@ module.exports = {
   getAllOccupiedSlots: async (req, res) => {
     try {
       const occupiedParkingSlots = await Dbhelper.getOccupiedParkingSlots();
+      _logger.info(`Occupied Slots ${occupiedParkingSlots}`)
       return _handleResponse(req, res, null, occupiedParkingSlots);
     } catch (e) {
     // _logger.error('Error in login  ', e);
